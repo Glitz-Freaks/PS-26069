@@ -13,9 +13,35 @@
 
 **An AI-driven, enterprise-grade meteorological big data intelligence platform for India — fusing real-time multi-source data ingestion, Indic multilingual neural translation, 4-tier deduplication & clustering, dynamic district-level disaster warning percentages (0–100%), cryptographic officer RBAC authentication, and interactive GIS mapping.**
 
-[System Architecture](#-system-architecture) • [Microservices Breakdown](#-microservices-breakdown) • [4-Tier Deduplication](#-4-tier-deduplication--clustering-engine) • [Warning Severity Formula](#-dynamic-warning-severity-percentage-engine) • [API Reference](#-complete-rest-api-documentation) • [Installation & Setup](#-step-by-step-installation--quick-start) • [Live Demo Guide](#-live-testing--demonstration-guide)
+[System Architecture](#-system-architecture) • [Microservices Breakdown](#-microservices-breakdown) • [MVP vs Production](#-sih-2026-mvp-vs-target-production-architecture) • [4-Tier Deduplication](#-4-tier-deduplication--clustering-engine) • [Warning Severity Formula](#-dynamic-warning-severity-percentage-engine) • [API Reference](#-complete-rest-api-documentation) • [Installation & Setup](#-step-by-step-installation--quick-start) • [Live Demo Guide](#-live-testing--demonstration-guide)
 
 </div>
+
+---
+
+> [!NOTE]
+> ### 🏆 Smart India Hackathon (SIH 2026) — Technical MVP & Proof-of-Concept
+> This codebase is a fully functioning **Minimum Viable Product (MVP) & Technical Demonstration** built for **Smart India Hackathon 2026** (Problem Statement: `PS-26069` / Glitz-Freaks). 
+> It provides an end-to-end working demonstration of automated multi-source meteorological harvesting, Indic NLP translation, 4-tier deduplication, dynamic district-level disaster risk indices ($0-100\%$), NDMA officer verification workflows, and GIS analytics.
+>
+> The **Target National Production Architecture** (planned for large-scale institutional deployment with IMD, NDMA, and State Disaster Management Authorities) introduces enterprise streaming pipelines, physics-informed AI forecasting models, and nationwide Cell Broadcast alert dissemination. See the detailed [MVP vs. Production Comparison Matrix](#-sih-2026-mvp-vs-target-production-architecture) below.
+
+---
+
+## 🚀 SIH 2026 MVP vs. Target Production Architecture
+
+The comparison table below outlines the core technical differences between the current working Hackathon MVP and the planned National Enterprise Deployment:
+
+| Dimension / Subsystem | 🧪 Current SIH 2026 MVP (Working Prototype) | 🏛️ Target Production Scale (National Deployment) |
+|---|---|---|
+| **Data Ingestion & Throughput** | • Multi-channel asynchronous polling scrapers (GNews RSS, X/Bluesky, Reddit, IMD RSS).<br>• Batch ingestion cycles run every 5–15 mins via local runners or GitHub Actions.<br>• Rate-limited external REST API gateways. | • **Distributed Apache Kafka & Apache Flink** streaming pipelines processing **50,000+ events/sec**.<br>• Direct low-latency socket hook to **IMD Doppler Weather Radar GTS (Global Telecommunication System)** and automated AWS (Automated Weather Stations) telemetry.<br>• Enterprise social media firehose streams with real-time websocket pushes. |
+| **Indic Multilingual NLP** | • Hybrid architecture combining OpenRouter LLMs with an **instant Local Indic Weather Glossary** (22+ languages) providing sub-second fallback.<br>• Direct entity extraction for locations, severity, and hazard categories. | • **Self-hosted fine-tuned IndicBERT / Bhashini (Digital India)** on-premise GPU clusters with zero third-party cloud dependence.<br>• **Voice-to-Text Multi-dialect ASR Engine** for transcribing regional distress calls and emergency audio broadcasts (IVR helpline 1078/1070 integration). |
+| **Deduplication & Fake News Detection** | • **4-Tier Deduplication Pipeline**:<br>&nbsp;&nbsp;1. Exact URL / Content SHA-256 Hashing.<br>&nbsp;&nbsp;2. 64-bit Media Perceptual Difference Hashing (dHash).<br>&nbsp;&nbsp;3. In-process Xenova ONNX Dense Vector Embeddings (`bge-small-en-v1.5`, 384-dim).<br>&nbsp;&nbsp;4. MongoDB 25 km / 3-hour Spatio-Temporal Spatial Indexing. | • **Distributed Multi-Billion Vector Database** (Milvus / Qdrant) with HNSW indexing.<br>• **Multimodal Vision-Language Models (CLIP / BLIP-2)** to detect AI-generated/deepfake disaster imagery and reverse-search web historical records to prevent recycled storm photos.<br>• EXIF cryptographic authenticity verification and mobile camera sensor watermarking. |
+| **Warning Risk Computation Engine** | • Deterministic mathematical formula combining:<br>&nbsp;&nbsp;• Official IMD Bulletin Status ($40\%$).<br>&nbsp;&nbsp;• Verified Event Density ($35\%$).<br>&nbsp;&nbsp;• Temporal Recency Half-Life ($15\%$).<br>&nbsp;&nbsp;• Spatial Clustered Reports ($10\%$). | • **Physics-Informed Neural Network (PINN) + Numerical Weather Prediction (NWP)** ensemble fusing ECMWF / NCMRWF atmospheric simulations.<br>• Dynamic GIS hydrological elevation runoff maps, watershed drainage limits, and historical disaster damage matrices.<br>• Hyperlocal 500-meter resolution flood inundation simulations. |
+| **Citizen Reporting & Engagement** | • Modern responsive web portal (`/report`) with browser GPS auto-capture, reverse geocoding, category selection, and photo upload.<br>• Instant client-side verification receipt generation. | • **Dedicated Offline-First Native Mobile Apps (Android / iOS)** with peer-to-peer Bluetooth mesh networking when telecom towers fail during cyclones/floods.<br>• Citizen reputation scoring with Aadhaar / Jan Parichay identity verification.<br>• Two-way SOS dispatch and nearest emergency relief shelter routing. |
+| **Officer Command & Security** | • Cryptographic JWT-gated Officer Triage Console (`/admin`) with bcrypt password hashing and 1-click test credentials.<br>• State-level report approval, rejection, and alert broadcasting. | • **National Single Sign-On (MeriPehchan / Jan Parichay)** with Multi-Factor Hardware Tokens (FIDO2 / YubiKey).<br>• Hardware Security Module (HSM) encrypted audit logs and Role-Based Access Control (RBAC) covering National (NDMA), State (SDMA), and District (DDMA) command structures. |
+| **Infrastructure & Scalability** | • Dockerized Express.js microservices, Next.js 16 frontend, and MongoDB Atlas cloud document database. | • **Multi-Region Kubernetes (K8s) Cluster** deployed on NIC / MeghRaj National Cloud with auto-scaling across 100+ nodes, automated failover, and air-gapped disaster recovery (DR) sites with 99.999% uptime SLA. |
+| **Disaster Alert Dissemination** | • Real-time interactive Leaflet GIS map with pulsing danger rings, emergency warning badges, and live incident ticker. | • Direct integration with **National Disaster Alert Portal (NDMA Common Alerting Protocol - CAP)**, **Cell Broadcast Emergency Alerts** (loud tone sent directly to all mobile handsets in the target district), automated sirens, and TV/Radio EAS interrupt broadcasts. |
 
 ---
 

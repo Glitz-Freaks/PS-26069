@@ -65,43 +65,133 @@ export async function getFilteredEvents(req, res) {
 
 export async function getNationalStats(req, res) {
   try {
-    const collection = getWeatherCollection();
-    if (!collection) {
-      return res.json({
-        total_events: 124,
-        verified_events: 98,
-        active_alerts: 4,
-        top_affected_states: [
-          { state: "Maharashtra", count: 48 },
-          { state: "Delhi", count: 26 },
-          { state: "Tamil Nadu", count: 21 },
-          { state: "Kerala", count: 18 },
-          { state: "Assam", count: 11 }
-        ]
-      });
+    const weatherCol = getWeatherCollection();
+    const imdCol = getIMDAlertsCollection();
+
+    if (!weatherCol) {
+      return res.status(503).json({ error: "Database not connected." });
     }
 
-    const totalEvents = await collection.countDocuments({});
-    const verifiedEvents = await collection.countDocuments({ verification_status: "VERIFIED" });
+    // 1. Basic Count Aggregations
+    const totalEvents = await weatherCol.countDocuments({});
+    const verifiedEvents = await weatherCol.countDocuments({ verification_status: "VERIFIED" });
+    const unverifiedEvents = totalEvents - verifiedEvents;
+    const activeAlerts = imdCol ? await imdCol.countDocuments({}) : 0;
 
-    const stateAggregation = await collection.aggregate([
+    // 2. Top Impacted States
+    const stateAggregation = await weatherCol.aggregate([
+      { $match: { "location.state": { $exists: true, $ne: null, $ne: "" } } },
       { $group: { _id: "$location.state", count: { $sum: 1 } } },
       { $sort: { count: -1 } },
-      { $limit: 6 }
+      { $limit: 8 }
     ]).toArray();
 
-    const categoryAggregation = await collection.aggregate([
+    const maxStateCount = stateAggregation[0]?.count || 1;
+    const topStates = stateAggregation.map(s => ({
+      state: s._id || 'Unknown',
+      count: s.count,
+      percentage: Math.round((s.count / maxStateCount) * 100),
+      shareOfTotal: totalEvents > 0 ? ((s.count / totalEvents) * 100).toFixed(1) : 0
+    }));
+
+    // 3. Category Breakdown
+    const categoryAggregation = await weatherCol.aggregate([
       { $group: { _id: "$event_category", count: { $sum: 1 } } },
       { $sort: { count: -1 } }
     ]).toArray();
 
+    const categoryColors = {
+      FLOODING: "bg-[#002b5b]",
+      RAINFALL: "bg-sky-700",
+      THUNDERSTORM: "bg-amber-600",
+      CYCLONE: "bg-rose-700",
+      HEATWAVE: "bg-orange-600",
+      COLDWAVE: "bg-indigo-600",
+      FOG: "bg-slate-600",
+      LANDSLIDE: "bg-emerald-700"
+    };
+
+    const categories = categoryAggregation.map(c => ({
+      category: c._id || 'GENERAL',
+      count: c.count,
+      percentage: totalEvents > 0 ? ((c.count / totalEvents) * 100).toFixed(1) : 0,
+      color: categoryColors[c._id] || "bg-slate-700"
+    }));
+
+    // 4. Severity Distribution
+    const severityAggregation = await weatherCol.aggregate([
+      { $group: { _id: "$severity", count: { $sum: 1 } } },
+      { $sort: { count: -1 } }
+    ]).toArray();
+
+    const severities = {
+      CRITICAL: 0,
+      HIGH: 0,
+      MODERATE: 0,
+      LOW: 0
+    };
+    severityAggregation.forEach(s => {
+      if (s._id && severities.hasOwnProperty(s._id)) {
+        severities[s._id] = s.count;
+      }
+    });
+
+    // 5. Ingestion Source Distribution
+    const sourceAggregation = await weatherCol.aggregate([
+      { $group: { _id: "$source_type", count: { $sum: 1 } } },
+      { $sort: { count: -1 } }
+    ]).toArray();
+
+    const sources = sourceAggregation.map(s => ({
+      source: s._id || 'other',
+      count: s.count,
+      percentage: totalEvents > 0 ? ((s.count / totalEvents) * 100).toFixed(1) : 0
+    }));
+
+    // 6. Cluster & Deduplication Metrics
+    const clusterCountAgg = await weatherCol.aggregate([
+      { $group: { _id: "$cluster_id" } },
+      { $count: "totalClusters" }
+    ]).toArray();
+
+    const totalClusters = clusterCountAgg[0]?.totalClusters || totalEvents;
+    const dedupRatio = totalClusters > 0 ? (totalEvents / totalClusters).toFixed(2) : "1.00";
+
+    // 7. Latest Live Incident Feed
+    const latestEvents = await weatherCol
+      .find({})
+      .sort({ "timestamps.event_time": -1 })
+      .limit(6)
+      .project({
+        _id: 1,
+        translated_text: 1,
+        original_text: 1,
+        event_category: 1,
+        severity: 1,
+        verification_status: 1,
+        trust_score: 1,
+        location: 1,
+        source_type: 1,
+        timestamps: 1
+      })
+      .toArray();
+
     res.json({
       total_events: totalEvents,
       verified_events: verifiedEvents,
-      top_affected_states: stateAggregation.map(s => ({ state: s._id || 'Unknown', count: s.count })),
-      category_breakdown: categoryAggregation.map(c => ({ category: c._id || 'General', count: c.count }))
+      unverified_events: unverifiedEvents,
+      active_alerts: activeAlerts,
+      accuracy_rate: totalEvents > 0 ? ((verifiedEvents / totalEvents) * 100).toFixed(1) : "100.0",
+      deduplication_ratio: `${dedupRatio} : 1`,
+      total_clusters: totalClusters,
+      top_affected_states: topStates,
+      category_breakdown: categories,
+      severity_breakdown: severities,
+      source_breakdown: sources,
+      latest_events: latestEvents
     });
   } catch (err) {
+    console.error("[NATIONAL STATS ERROR]", err);
     res.status(500).json({ error: err.message });
   }
 }

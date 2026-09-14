@@ -122,33 +122,31 @@ export default function Navbar() {
               <span>Citizen Observation Portal</span>
             </Link>
 
-            {/* Officer Protected Links (Hidden until logged in) */}
-            {isLoggedIn && (
-              <>
-                <Link
-                  href="/admin"
-                  className={`px-4 py-2.5 transition rounded-t-md border-b-2 flex items-center space-x-1.5 ${
-                    pathname === '/admin'
-                      ? 'border-amber-400 bg-[#001833] text-amber-300 font-extrabold'
-                      : 'border-transparent text-slate-100 hover:text-white hover:bg-[#003d80]'
-                  }`}
-                >
-                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                  <span>NDMA Triage Console</span>
-                </Link>
+            <Link
+              href="/analytics"
+              className={`px-4 py-2.5 transition rounded-t-md border-b-2 flex items-center space-x-1.5 ${
+                pathname === '/analytics'
+                  ? 'border-amber-400 bg-[#001833] text-amber-300 font-extrabold'
+                  : 'border-transparent text-slate-100 hover:text-white hover:bg-[#003d80]'
+              }`}
+            >
+              <BarChart3 className="w-4 h-4 text-sky-400" />
+              <span>Big Data Analytics</span>
+            </Link>
 
-                <Link
-                  href="/analytics"
-                  className={`px-4 py-2.5 transition rounded-t-md border-b-2 flex items-center space-x-1.5 ${
-                    pathname === '/analytics'
-                      ? 'border-amber-400 bg-[#001833] text-amber-300 font-extrabold'
-                      : 'border-transparent text-slate-100 hover:text-white hover:bg-[#003d80]'
-                  }`}
-                >
-                  <BarChart3 className="w-4 h-4 text-sky-400" />
-                  <span>Big Data Analytics</span>
-                </Link>
-              </>
+            {/* Officer Protected Links */}
+            {isLoggedIn && (
+              <Link
+                href="/admin"
+                className={`px-4 py-2.5 transition rounded-t-md border-b-2 flex items-center space-x-1.5 ${
+                  pathname === '/admin'
+                    ? 'border-amber-400 bg-[#001833] text-amber-300 font-extrabold'
+                    : 'border-transparent text-slate-100 hover:text-white hover:bg-[#003d80]'
+                }`}
+              >
+                <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                <span>NDMA Triage Console</span>
+              </Link>
             )}
           </nav>
 
