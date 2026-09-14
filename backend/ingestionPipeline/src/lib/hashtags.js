@@ -1,0 +1,41 @@
+export const WEATHER_HASHTAGS = [
+  '#IMD',
+  '#WeatherUpdate',
+  '#MumbaiRains',
+  '#DelhiRain',
+  '#ChennaiRains',
+  '#BengaluruRains',
+  '#KolkataRains',
+  '#HyderabadRains',
+  '#Monsoon2026',
+  '#Monsoon',
+  '#CycloneAlert',
+  '#CycloneWarning',
+  '#Floods',
+  '#AssamFloods',
+  '#KeralaFloods',
+  '#Waterlogging',
+  '#Heatwave',
+  '#Thunderstorm',
+  '#Cloudburst',
+  '#Landslide',
+  '#DenseFog',
+  '#DustStorm'
+];
+
+export const WEATHER_KEYWORDS = [
+  'heavy rainfall',
+  'waterlogging',
+  'submerged',
+  'cloudburst',
+  'thunderstorm',
+  'flash flood',
+  'heatwave',
+  'cyclone',
+  'landslide',
+  'tree uprooted',
+  'traffic submerged',
+  'red alert',
+  'orange alert',
+  'imd warning'
+];
